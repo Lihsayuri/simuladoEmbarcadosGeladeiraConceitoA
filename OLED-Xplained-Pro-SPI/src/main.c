@@ -357,16 +357,13 @@ int main (void)
 
 		
 		 if (but3_flag && !piscando){
-			 uint32_t next_min, next_sec;
-			 if ((current_sec + alarm_sec) > 59){
-				 next_min = (current_sec+alarm_sec+(alarm_min*60))/60;
-				 next_sec = (current_sec+alarm_sec) % 60;
-				 rtc_set_time_alarm(RTC, 1, current_hour, 1,  current_min + next_min, 1, next_sec);
-			} else {
-				 next_min = current_min + alarm_min;
-				 next_sec = current_sec + alarm_sec;
-				 rtc_set_time_alarm(RTC, 1, current_hour, 1,  next_min, 1, next_sec);
-			 }
+			 uint32_t next_hour, next_min, next_sec;
+			 
+			 next_sec = (current_sec + alarm_sec) % 60;
+			 next_min = ((current_min + alarm_min) % 60) + (current_sec + alarm_sec)/60;
+			 next_hour = current_hour + (current_min + alarm_min)/60;
+			 
+			 rtc_set_time_alarm(RTC, 1, next_hour, 1,  next_min, 1, next_sec);
 			 			 
 			 TC_init(TC0, ID_TC1, 1, 1);
 			 tc_start(TC0, 1);
